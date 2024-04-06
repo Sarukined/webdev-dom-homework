@@ -11,8 +11,8 @@
       <ul class="comments">
         <li class="comment">
           <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
+            <div class="comment-header-name">Глеб Фокин</div>
+            <div class="comment-header-time">12.02.22 12:18</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">Это будет первый комментарий на этой странице</div>
@@ -70,7 +70,6 @@
     const commentHeaderNameEl = document.getElementsByClassName('comment-header-name')[0];
     const commentHeaderTimeEl = document.getElementsByClassName('comment-header-time')[0];
     const commentTextEl = document.getElementsByClassName('comment-text')[0];
-    console.log(LikesCounter.innerHTML);
 
     ButtonEl.addEventListener('click', function (e) {
       AddFormNameEl.classList.remove('color-back-input');
