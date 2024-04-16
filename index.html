@@ -9,36 +9,7 @@
   <body>
     <div class="container">
       <ul class="comments">
-        <li class="comment">
-          <div class="comment-header">
-            <div class="comment-header-name">Глеб Фокин</div>
-            <div class="comment-header-time">12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">Это будет первый комментарий на этой странице</div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">Мне нравится как оформлена эта страница! ❤</div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
+        <!-- [eq] -->
       </ul>
       <div class="add-form">
         <input type="text" class="add-form-name" placeholder="Введите ваше имя" />
@@ -61,15 +32,120 @@
   </style>
 
   <script>
-    const LikesCounter = document.getElementsByClassName('likes-counter')[0];
+    const likeButtons = document.querySelectorAll('.like-button');
+    const LikesCounter = document.querySelectorAll('.likes-counter');
+    // const LikesCounter = document.querySelectorAll('likes-counter')[0];
     const AddFormTextEl = document.getElementsByClassName('add-form-text')[0];
     const AddFormNameEl = document.getElementsByClassName('add-form-name')[0];
     const ButtonEl = document.getElementsByClassName('add-form-button')[0];
     const commentsEl = document.getElementsByClassName('comments')[0];
-    const commentEl = document.getElementsByClassName('comment')[0];
-    const commentHeaderNameEl = document.getElementsByClassName('comment-header-name')[0];
-    const commentHeaderTimeEl = document.getElementsByClassName('comment-header-time')[0];
-    const commentTextEl = document.getElementsByClassName('comment-text')[0];
+    // const commentEl = document.getElementsByClassName('comment')[0];
+    // const commentHeaderNameEl = document.getElementsByClassName('comment-header-name')[0];
+    // const commentHeaderTimeEl = document.getElementsByClassName('comment-header-time')[0];
+    // const commentTextEl = document.getElementsByClassName('comment-text')[0];
+    const UserInformations = document.querySelectorAll('.comment');
+
+    function FunLiCoun() {
+      const likeButtons = document.querySelectorAll('.like-button');
+
+      likeButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          const liked = button.dataset.liked === 'true';
+
+          const likesCounter = button.parentElement.querySelector('.likes-counter');
+
+          if (liked) {
+            // Уменьшаем счетчик лайков на 1
+            likesCounter.textContent = parseInt(likesCounter.textContent) - 1;
+            // Меняем цвет сердечка на пустой
+            button.className = button.className.replace(' -active-like', '');
+            // Меняем значение атрибута data-liked на false
+            button.dataset.liked = 'false';
+          } else {
+            // Увеличиваем счетчик лайков на 1
+            likesCounter.textContent = parseInt(likesCounter.textContent) + 1;
+            // Меняем цвет сердечка на закрашенный
+            button.className += ' -active-like';
+            // Меняем значение атрибута data-liked на true
+            button.dataset.liked = 'true';
+          }
+        });
+      });
+    }
+
+    function getCurrentDateTime() {
+      const now = new Date();
+
+      const options = {
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+      };
+
+      return now.toLocaleString('ru-RU', options);
+    }
+
+    const initEventListener = () => {
+      const UserInformations = document.querySelectorAll('.comment');
+
+      for (const UserInformation of UserInformations) {
+        console.log(UserInformation);
+      }
+    };
+
+    initEventListener();
+
+    const UsersInfo = [
+      {
+        name: 'Глеб Фокин',
+        time: '12.02.22 12:18',
+        comment: 'Это будет первый комментарий на этой странице',
+        like: 0,
+        liked: false,
+      },
+      {
+        name: 'Варвара Н.',
+        time: '13.02.22 19:22',
+        comment: 'Мне нравится как оформлена эта страница! ❤',
+        like: 0,
+        liked: false,
+      },
+    ];
+
+    const renderUsersInfo = () => {
+      const UsersHtml = UsersInfo.map(Users => {
+        const { comment, like, name, time, liked } = Users;
+
+        return `<li
+                   class="comment"
+                   data-name="${name}"
+                   data-time="${time}"
+                   data-text="${comment}"
+                   data-like="${like}"
+                 >
+                   <div class="comment-header">
+                     <div class="comment-header-name">${name}</div>
+                     <div class="comment-header-time">${time}</div>
+                   </div>
+                   <div class="comment-body">
+                     <div class="comment-text">${comment}</div>
+                   </div>
+                   <div class="comment-footer">
+                     <div class="likes">
+                       <span class="likes-counter">${like}</span>
+                       <button class="like-button ${liked ? '-active-like' : ''}"></button>
+                     </div>
+                   </div>
+                 </li>`;
+      }).join('');
+      commentsEl.innerHTML = UsersHtml;
+      console.log(UsersInfo);
+      FunLiCoun();
+    };
+
+    renderUsersInfo();
 
     ButtonEl.addEventListener('click', function (e) {
       AddFormNameEl.classList.remove('color-back-input');
@@ -84,30 +160,14 @@
         return;
       }
 
-      const newCommentEl = commentEl.cloneNode(true); // клонируем элемент "comment" с содержимым
+      UsersInfo.push({
+        name: AddFormNameEl.value,
+        time: getCurrentDateTime(),
+        comment: AddFormTextEl.value,
+        like: 0,
+      });
 
-      const commentHeaderNameEl = newCommentEl.querySelector('.comment-header-name');
-      const commentHeaderTimeEl = newCommentEl.querySelector('.comment-header-time');
-      const commentTextEl = newCommentEl.querySelector('.comment-text');
-      const LikesCounter = newCommentEl.querySelector('.likes-counter');
-      commentHeaderNameEl.textContent = AddFormNameEl.value;
-
-      const now = new Date(); // создаем объект Date для текущей даты и времени
-
-      const options = {
-        year: 'numeric', // включаем год в формате "2022"
-        month: 'numeric', // включаем месяц в формате "2"
-        day: 'numeric', // включаем день в формате "12"
-        hour: 'numeric', // включаем часы в формате "12"
-        minute: 'numeric', // включаем минуты в формате "18"
-      };
-
-      const localDateString = now.toLocaleString('ru-RU', options);
-      commentHeaderTimeEl.textContent = localDateString;
-
-      commentTextEl.textContent = AddFormTextEl.value;
-
-      commentsEl.appendChild(newCommentEl); // добавляем новый элемент в конец списка комментариев
+      renderUsersInfo();
 
       LikesCounter.textContent = '0';
       AddFormNameEl.value = '';
