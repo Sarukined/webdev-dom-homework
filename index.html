@@ -45,34 +45,6 @@
     // const commentTextEl = document.getElementsByClassName('comment-text')[0];
     const UserInformations = document.querySelectorAll('.comment');
 
-    function FunLiCoun() {
-      const likeButtons = document.querySelectorAll('.like-button');
-
-      likeButtons.forEach(button => {
-        button.addEventListener('click', () => {
-          const liked = button.dataset.liked === 'true';
-
-          const likesCounter = button.parentElement.querySelector('.likes-counter');
-
-          if (liked) {
-            // Уменьшаем счетчик лайков на 1
-            likesCounter.textContent = parseInt(likesCounter.textContent) - 1;
-            // Меняем цвет сердечка на пустой
-            button.className = button.className.replace(' -active-like', '');
-            // Меняем значение атрибута data-liked на false
-            button.dataset.liked = 'false';
-          } else {
-            // Увеличиваем счетчик лайков на 1
-            likesCounter.textContent = parseInt(likesCounter.textContent) + 1;
-            // Меняем цвет сердечка на закрашенный
-            button.className += ' -active-like';
-            // Меняем значение атрибута data-liked на true
-            button.dataset.liked = 'true';
-          }
-        });
-      });
-    }
-
     function getCurrentDateTime() {
       const now = new Date();
 
@@ -135,14 +107,37 @@
                    <div class="comment-footer">
                      <div class="likes">
                        <span class="likes-counter">${like}</span>
-                       <button class="like-button ${liked ? '-active-like' : ''}"></button>
+                       <button class="like-button ${
+                         liked ? '-active-like' : ''
+                       }" data-index="${UsersInfo.indexOf(Users)}"></button>
                      </div>
                    </div>
                  </li>`;
       }).join('');
       commentsEl.innerHTML = UsersHtml;
       console.log(UsersInfo);
-      FunLiCoun();
+
+      const likeButtons = document.querySelectorAll('.like-button');
+
+      likeButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          const index = button.dataset.index;
+          const liked = UsersInfo[index].liked === true;
+          const likesCounter = button.parentElement.querySelector('.likes-counter');
+
+          if (liked) {
+            UsersInfo[index].like--;
+            UsersInfo[index].liked = false;
+            button.className = button.className.replace(' -active-like', '');
+          } else {
+            UsersInfo[index].like++;
+            UsersInfo[index].liked = true;
+            button.className += ' -active-like';
+          }
+
+          likesCounter.textContent = UsersInfo[index].like;
+        });
+      });
     };
 
     renderUsersInfo();
